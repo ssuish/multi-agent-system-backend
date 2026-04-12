@@ -10,6 +10,10 @@ class Settings(BaseSettings):
         ...,
         description="Supabase Postgres URI"
     ),
+    clerk_jwks_url: str = Field(
+        ...,
+        description="Clerk JWKS URL"
+    ),
     clerk_issuer: str = Field(
         ...,
         description="JWT iss claim"
