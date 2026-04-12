@@ -15,7 +15,7 @@
 
 # Modifications copyright 2026 - @ssuish
 # Changes:
-# - 12-04-2026: Wired the app with CORS and Lifespan
+# - 12-04-2026: Wired the app with CORS and Lifespan, and moved agent runner to agent_runner.py
 
 import os
 from collections.abc import AsyncIterator
@@ -34,12 +34,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
 from google.adk.a2a.utils.agent_card_builder import AgentCardBuilder
-from google.adk.artifacts import GcsArtifactService, InMemoryArtifactService
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
 from google.cloud import logging as google_cloud_logging
 
 from app.agent import app as adk_app
+from app.agent_runtime import runner
 from app.api.v1.router import api_v1_router
 from app.app_utils.telemetry import setup_telemetry
 from app.app_utils.typing import Feedback
@@ -50,20 +48,6 @@ setup_telemetry()
 _, project_id = google.auth.default()
 logging_client = google_cloud_logging.Client()
 logger = logging_client.logger(__name__)
-
-# Artifact bucket for ADK (created by Terraform, passed via env var)
-logs_bucket_name = os.environ.get("LOGS_BUCKET_NAME")
-artifact_service = (
-    GcsArtifactService(bucket_name=logs_bucket_name)
-    if logs_bucket_name
-    else InMemoryArtifactService()
-)
-
-runner = Runner(
-    app=adk_app,
-    artifact_service=artifact_service,
-    session_service=InMemorySessionService(),
-)
 
 request_handler = DefaultRequestHandler(
     agent_executor=A2aAgentExecutor(runner=runner), task_store=InMemoryTaskStore()

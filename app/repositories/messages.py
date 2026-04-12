@@ -2,6 +2,7 @@ from uuid import UUID
 
 import asyncpg
 
+
 async def insert_message(
     conn: asyncpg.Connection,
     conversation_id: UUID,
