@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# Modifications copyright 2026 - @ssuish
+# Changes:
+# - 12-04-2026: Wired the app with CORS and Lifespan
+
 import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -26,6 +31,7 @@ from a2a.utils.constants import (
     EXTENDED_AGENT_CARD_PATH,
 )
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
 from google.adk.a2a.utils.agent_card_builder import AgentCardBuilder
 from google.adk.artifacts import GcsArtifactService, InMemoryArtifactService
@@ -34,8 +40,11 @@ from google.adk.sessions import InMemorySessionService
 from google.cloud import logging as google_cloud_logging
 
 from app.agent import app as adk_app
+from app.api.v1.router import api_v1_router
 from app.app_utils.telemetry import setup_telemetry
 from app.app_utils.typing import Feedback
+from app.db.pool import close_pool, create_pool
+from app.settings import get_settings
 
 setup_telemetry()
 _, project_id = google.auth.default()
@@ -77,6 +86,9 @@ async def build_dynamic_agent_card() -> AgentCard:
 
 @asynccontextmanager
 async def lifespan(app_instance: FastAPI) -> AsyncIterator[None]:
+    settings = get_settings()
+    await create_pool(settings)
+
     agent_card = await build_dynamic_agent_card()
     a2a_app = A2AFastAPIApplication(agent_card=agent_card, http_handler=request_handler)
     a2a_app.add_routes_to_app(
@@ -85,7 +97,10 @@ async def lifespan(app_instance: FastAPI) -> AsyncIterator[None]:
         rpc_url=A2A_RPC_PATH,
         extended_agent_card_url=f"{A2A_RPC_PATH}{EXTENDED_AGENT_CARD_PATH}",
     )
-    yield
+    try:
+        yield
+    finally:
+        await close_pool()
 
 
 app = FastAPI(
@@ -93,6 +108,17 @@ app = FastAPI(
     description="API for interacting with the Agent multi-agent-system",
     lifespan=lifespan,
 )
+
+settings = get_settings()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origin_list,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(api_v1_router)
 
 
 @app.post("/feedback")

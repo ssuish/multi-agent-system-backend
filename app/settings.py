@@ -10,19 +10,19 @@ class Settings(BaseSettings):
     database_url: str = Field(
         ...,
         description="Supabase Postgres URI"
-    ),
+    )
     clerk_jwks_url: str = Field(
         ...,
         description="Clerk JWKS URL"
-    ),
+    )
     clerk_issuer: str = Field(
         ...,
         description="JWT iss claim"
-    ),
+    )
     clerk_audience: str | None = Field(
         None,
         description="Optional azp/aud verification; set if use a named audience."
-    ),
+    )
     cors_origins: str = Field(
         default="http://localhost:3000",
         description="Comma-separated list of allowed browser origins."
