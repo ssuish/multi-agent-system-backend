@@ -27,6 +27,14 @@ class Settings(BaseSettings):
         default="http://localhost:3000",
         description="Comma-separated list of allowed browser origins."
     )
+    mcp_enabled: bool = Field(
+        default=False,
+        description="When true, the agent may call MCP tools via stdio (see mcp_server_command).",
+    )
+    mcp_server_command: str | None = Field(
+        default=None,
+        description='JSON array string for the MCP stdio server, e.g. ["npx","-y","@modelcontextprotocol/server-everything"].',
+    )
 
     @property
     def cors_origin_list(self) -> list[str]:
