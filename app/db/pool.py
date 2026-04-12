@@ -23,4 +23,3 @@ def get_pool() -> asyncpg.Pool:
         raise RuntimeError("Database pool not initialized")
     return _pool
 
- 
