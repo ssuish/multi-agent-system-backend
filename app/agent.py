@@ -1,4 +1,3 @@
-# ruff: noqa
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,19 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Modifications copyright 2026 - @ssuish
+# Changes:
+# - 12-04-2026: Wired the MCP bridge to the agent
+
 import datetime
 import json
 import logging
+import os
 from zoneinfo import ZoneInfo
 
+import google.auth
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models import Gemini
 from google.adk.tools import LongRunningFunctionTool
 from google.genai import types
-
-import os
-import google.auth
 
 from app.mcp import StdioServerParameters, call_tool, configure_stdio_server
 from app.settings import get_settings
@@ -69,9 +71,7 @@ async def call_mcp_tool(name: str, arguments_json: str) -> str:
             return "MCP_SERVER_COMMAND must be a non-empty JSON array."
         if not all(isinstance(p, str) for p in parts):
             return "MCP_SERVER_COMMAND entries must be strings."
-        configure_stdio_server(
-            StdioServerParameters(command=parts[0], args=parts[1:])
-        )
+        configure_stdio_server(StdioServerParameters(command=parts[0], args=parts[1:]))
         _mcp_stdio_configured = True
 
     payload = (arguments_json or "").strip()
