@@ -2359,70 +2359,6 @@ wheels = [
 ]
 
 [[package]]
-name = "multi-agent-system"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "a2a-sdk" },
-    { name = "asyncpg" },
-    { name = "fastapi" },
-    { name = "gcsfs" },
-    { name = "google-adk" },
-    { name = "google-cloud-aiplatform", extra = ["evaluation"] },
-    { name = "google-cloud-logging" },
-    { name = "nest-asyncio" },
-    { name = "opentelemetry-instrumentation-google-genai" },
-    { name = "uvicorn" },
-]
-
-[package.optional-dependencies]
-eval = [
-    { name = "google-adk", extra = ["eval"] },
-]
-jupyter = [
-    { name = "jupyter" },
-]
-lint = [
-    { name = "codespell" },
-    { name = "ruff" },
-    { name = "ty" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "nest-asyncio" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "a2a-sdk", specifier = "~=0.3.22" },
-    { name = "asyncpg", specifier = ">=0.30.0,<1.0.0" },
-    { name = "codespell", marker = "extra == 'lint'", specifier = ">=2.2.0,<3.0.0" },
-    { name = "fastapi", specifier = ">=0.115.8,<1.0.0" },
-    { name = "gcsfs", specifier = ">=2024.11.0" },
-    { name = "google-adk", specifier = ">=1.16.0,<2.0.0" },
-    { name = "google-adk", extras = ["eval"], marker = "extra == 'eval'", specifier = ">=1.15.0,<2.0.0" },
-    { name = "google-cloud-aiplatform", extras = ["evaluation"], specifier = ">=1.130.0" },
-    { name = "google-cloud-logging", specifier = ">=3.12.0,<4.0.0" },
-    { name = "jupyter", marker = "extra == 'jupyter'", specifier = ">=1.0.0,<2.0.0" },
-    { name = "nest-asyncio", specifier = ">=1.6.0,<2.0.0" },
-    { name = "opentelemetry-instrumentation-google-genai", specifier = ">=0.1.0,<1.0.0" },
-    { name = "ruff", marker = "extra == 'lint'", specifier = ">=0.4.6,<1.0.0" },
-    { name = "ty", marker = "extra == 'lint'", specifier = ">=0.0.1a0" },
-    { name = "uvicorn", specifier = "~=0.34.0" },
-]
-provides-extras = ["jupyter", "eval", "lint"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "nest-asyncio", specifier = ">=1.6.0,<2.0.0" },
-    { name = "pytest", specifier = ">=8.3.4,<9.0.0" },
-    { name = "pytest-asyncio", specifier = ">=0.23.8,<1.0.0" },
-]
-
-[[package]]
 name = "mako"
 version = "1.3.10"
 source = { registry = "https://pypi.org/simple" }
@@ -2642,6 +2578,76 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/4b/f9/dc3787ee5c813cc27fe79f45ad4500d9b5437f23a7402435cc34e07c7718/mmh3-5.2.1-cp313-cp313-win32.whl", hash = "sha256:54b64fb2433bc71488e7a449603bf8bd31fbcf9cb56fbe1eb6d459e90b86c37b", size = 40769, upload-time = "2026-03-05T15:55:05.277Z" },
     { url = "https://files.pythonhosted.org/packages/43/67/850e0b5a1e97799822ebfc4ca0e8c6ece3ed8baf7dcdf64de817dfdda2ca/mmh3-5.2.1-cp313-cp313-win_amd64.whl", hash = "sha256:cae6383181f1e345317742d2ddd88f9e7d2682fa4c9432e3a74e47d92dce0229", size = 41563, upload-time = "2026-03-05T15:55:06.283Z" },
     { url = "https://files.pythonhosted.org/packages/c0/cc/98c90b28e1da5458e19fbfaf4adb5289208d3bfccd45dd14eab216a2f0bb/mmh3-5.2.1-cp313-cp313-win_arm64.whl", hash = "sha256:022aa1a528604e6c83d0a7705fdef0b5355d897a9e0fa3a8d26709ceaa06965d", size = 39310, upload-time = "2026-03-05T15:55:07.323Z" },
+]
+
+[[package]]
+name = "multi-agent-system"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "a2a-sdk" },
+    { name = "asyncpg" },
+    { name = "cryptography" },
+    { name = "fastapi" },
+    { name = "gcsfs" },
+    { name = "google-adk" },
+    { name = "google-cloud-aiplatform", extra = ["evaluation"] },
+    { name = "google-cloud-logging" },
+    { name = "nest-asyncio" },
+    { name = "opentelemetry-instrumentation-google-genai" },
+    { name = "pydantic-settings" },
+    { name = "pyjwt", extra = ["crypto"] },
+    { name = "uvicorn" },
+]
+
+[package.optional-dependencies]
+eval = [
+    { name = "google-adk", extra = ["eval"] },
+]
+jupyter = [
+    { name = "jupyter" },
+]
+lint = [
+    { name = "codespell" },
+    { name = "ruff" },
+    { name = "ty" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "nest-asyncio" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "a2a-sdk", specifier = "~=0.3.22" },
+    { name = "asyncpg", specifier = ">=0.30.0,<1.0.0" },
+    { name = "codespell", marker = "extra == 'lint'", specifier = ">=2.2.0,<3.0.0" },
+    { name = "cryptography", specifier = ">=46.0.6" },
+    { name = "fastapi", specifier = ">=0.115.8,<1.0.0" },
+    { name = "gcsfs", specifier = ">=2024.11.0" },
+    { name = "google-adk", specifier = ">=1.16.0,<2.0.0" },
+    { name = "google-adk", extras = ["eval"], marker = "extra == 'eval'", specifier = ">=1.15.0,<2.0.0" },
+    { name = "google-cloud-aiplatform", extras = ["evaluation"], specifier = ">=1.130.0" },
+    { name = "google-cloud-logging", specifier = ">=3.12.0,<4.0.0" },
+    { name = "jupyter", marker = "extra == 'jupyter'", specifier = ">=1.0.0,<2.0.0" },
+    { name = "nest-asyncio", specifier = ">=1.6.0,<2.0.0" },
+    { name = "opentelemetry-instrumentation-google-genai", specifier = ">=0.1.0,<1.0.0" },
+    { name = "pydantic-settings", specifier = ">=2.13.1" },
+    { name = "pyjwt", extras = ["crypto"], specifier = ">=2.12.1" },
+    { name = "ruff", marker = "extra == 'lint'", specifier = ">=0.4.6,<1.0.0" },
+    { name = "ty", marker = "extra == 'lint'", specifier = ">=0.0.1a0" },
+    { name = "uvicorn", specifier = "~=0.34.0" },
+]
+provides-extras = ["jupyter", "eval", "lint"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "nest-asyncio", specifier = ">=1.6.0,<2.0.0" },
+    { name = "pytest", specifier = ">=8.3.4,<9.0.0" },
+    { name = "pytest-asyncio", specifier = ">=0.23.8,<1.0.0" },
 ]
 
 [[package]]

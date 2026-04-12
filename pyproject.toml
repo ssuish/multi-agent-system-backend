@@ -16,6 +16,9 @@ dependencies = [
     "fastapi>=0.115.8,<1.0.0",
     "uvicorn~=0.34.0",
     "asyncpg>=0.30.0,<1.0.0",
+    "pyjwt[crypto]>=2.12.1",
+    "cryptography>=46.0.6",
+    "pydantic-settings>=2.13.1",
 ]
 requires-python = ">=3.10,<3.14"
 
