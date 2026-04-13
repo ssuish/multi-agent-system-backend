@@ -38,6 +38,9 @@ jupyter = [
 eval = [
     "google-adk[eval]>=1.15.0,<2.0.0",
 ]
+agent_eval = [
+    "deepeval>=2.0.0,<3.0.0",
+]
 lint = [
     "ruff>=0.4.6,<1.0.0",
     "ty>=0.0.1a0",
@@ -98,6 +101,9 @@ build-backend = "hatchling.build"
 [tool.pytest.ini_options]
 pythonpath = "."
 asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "eval: optional agent evaluation / DeepEval tests (requires agent_eval extras)",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["app","frontend"]

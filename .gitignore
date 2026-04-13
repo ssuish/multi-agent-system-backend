@@ -203,3 +203,10 @@ tools/a2a-inspector/
 
 # ADK
 .adk/
+
+# Custom ignores
+# For OTel and Phoenix agent eval haven't integreted and reviewed yet.
+evals/
+eval_context.py
+# superpowers
+superpowers/
