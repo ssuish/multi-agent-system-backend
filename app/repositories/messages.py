@@ -20,6 +20,7 @@ async def insert_message(
         content,
     )
 
+
 async def list_messages_for_conversation(
     conn: asyncpg.Connection,
     conversation_id: UUID,

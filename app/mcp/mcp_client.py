@@ -22,7 +22,9 @@ _server_params: StdioServerParameters | None = None
 
 _startup_lock = asyncio.Lock()
 _worker_task: asyncio.Task[None] | None = None
-_request_queue: asyncio.Queue[tuple[str, dict[str, Any], asyncio.Future[str]]] | None = None
+_request_queue: (
+    asyncio.Queue[tuple[str, dict[str, Any], asyncio.Future[str]]] | None
+) = None
 _worker_boot: asyncio.Future[None] | None = None
 
 
@@ -30,7 +32,9 @@ def configure_stdio_server(params: StdioServerParameters) -> None:
     """Set the stdio server command/args. Must be called before the first `call_tool`."""
     global _server_params
     if _worker_task is not None:
-        raise RuntimeError("cannot reconfigure MCP stdio server after connection started")
+        raise RuntimeError(
+            "cannot reconfigure MCP stdio server after connection started"
+        )
     _server_params = params
 
 
@@ -90,7 +94,9 @@ async def _run_worker(boot: asyncio.Future[None]) -> None:
                         raise
                     except RuntimeError as e:
                         if str(e) != "mcp tool failed":
-                            _logger.exception("unexpected RuntimeError from MCP tool path")
+                            _logger.exception(
+                                "unexpected RuntimeError from MCP tool path"
+                            )
                         if not fut.done():
                             fut.set_exception(RuntimeError("mcp tool failed"))
                     except (McpError, OSError):
@@ -142,9 +148,7 @@ async def _ensure_worker() -> None:
     _raise_if_worker_dead()
 
 
-async def call_tool(
-    name: str, arguments: dict[str, object] | None = None
-) -> str:
+async def call_tool(name: str, arguments: dict[str, object] | None = None) -> str:
     await _ensure_worker()
     _raise_if_worker_dead()
     assert _request_queue is not None

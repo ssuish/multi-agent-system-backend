@@ -3,11 +3,7 @@ from jwt import decode as jwt_decode
 
 
 def verify_clerk_jwt(
-    token: str,
-    *,
-    clerk_jwks_url: str,
-    clerk_issuer: str,
-    clerk_audience: str | None
+    token: str, *, clerk_jwks_url: str, clerk_issuer: str, clerk_audience: str | None
 ) -> str:
     jwks_client = PyJWKClient(clerk_jwks_url)
     signing_key = jwks_client.get_signing_key_from_jwt(token)
@@ -31,4 +27,3 @@ def verify_clerk_jwt(
     if not isinstance(sub, str) or not sub:
         raise ValueError("Invalid token: missing sub")
     return sub
-

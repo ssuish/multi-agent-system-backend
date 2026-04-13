@@ -13,7 +13,11 @@ def test_get_me_override_db() -> None:
 
     class FakeConn:
         async def fetchrow(self, query: str, *args: object):
-            if "FROM profiles" in query and "WHERE" in query and "clerk_user_id" in query:
+            if (
+                "FROM profiles" in query
+                and "WHERE" in query
+                and "clerk_user_id" in query
+            ):
                 return None
             return {
                 "id": fixed_id,

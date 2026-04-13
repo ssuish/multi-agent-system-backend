@@ -11,8 +11,9 @@ async def get_profile_by_clerk_id(
         SELECT id, clerk_user_id, display_name, created_at, updated_at
         FROM profiles WHERE clerk_user_id = $1
         """,
-        clerk_user_id
+        clerk_user_id,
     )
+
 
 async def upsert_profile(
     conn: asyncpg.Connection, clerk_user_id: str, display_name: str | None
@@ -27,8 +28,9 @@ async def upsert_profile(
         RETURNING id, clerk_user_id, display_name, created_at, updated_at
         """,
         clerk_user_id,
-        display_name
+        display_name,
     )
+
 
 async def update_display_name(
     conn: asyncpg.Connection, profile_id: UUID, display_name: str
@@ -40,6 +42,5 @@ async def update_display_name(
         RETURNING id, clerk_user_id, display_name, created_at, updated_at
         """,
         profile_id,
-        display_name
+        display_name,
     )
-

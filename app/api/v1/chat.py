@@ -12,6 +12,7 @@ from app.services.chat_service import ChatService, ConversationNotFoundError
 router = APIRouter(tags=["chat"])
 _chat_service = ChatService(runner=runner)
 
+
 class ChatMessageIn(BaseModel):
     text: str
 
@@ -19,6 +20,7 @@ class ChatMessageIn(BaseModel):
 class ChatMessageOut(BaseModel):
     reply: str
     assistant_message_id: UUID
+
 
 @router.post("/conversations/{conversation_id}/messages", response_model=ChatMessageOut)
 async def post_message(

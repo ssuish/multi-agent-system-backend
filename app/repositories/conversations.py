@@ -18,6 +18,7 @@ async def get_conversation_for_user(
         profile_id,
     )
 
+
 async def create_conversation(
     conn: asyncpg.Connection,
     profile_id: UUID,
@@ -32,6 +33,7 @@ async def create_conversation(
         profile_id,
         title,
     )
+
 
 async def list_conversations_for_user(
     conn: asyncpg.Connection,

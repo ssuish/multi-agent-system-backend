@@ -11,14 +11,15 @@ from app.settings import get_settings
 
 _bearer = HTTPBearer(auto_error=False)
 
+
 async def get_db_conn() -> AsyncIterator[asyncpg.Connection]:
     pool = get_pool()
     async with pool.acquire() as conn:
         yield conn
 
+
 async def get_current_clerk_user_id(
-    creds: Annotated[HTTPAuthorizationCredentials | None,
-    Depends(_bearer)],
+    creds: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
 ) -> str:
     if creds is None or creds.scheme.lower() != "bearer":
         raise HTTPException(
@@ -40,5 +41,3 @@ async def get_current_clerk_user_id(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
         ) from None
-
-
