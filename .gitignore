@@ -208,6 +208,8 @@ tools/a2a-inspector/
 # For OTel and Phoenix agent eval haven't integreted and reviewed yet.
 evals/
 eval_context.py
-# superpowers
+# Local superpowers scratch
 superpowers/
+# Local scratch only
 memory/
+.cursor/
