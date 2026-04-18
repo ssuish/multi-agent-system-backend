@@ -111,6 +111,16 @@ deploy:
 # Alias for 'make deploy' for backward compatibility
 backend: deploy
 
+# Show how to pass additional Cloud Run env vars without storing secrets in the repo.
+# Example: export DATABASE_URL=... CLERK_JWKS_URL=... then run gcloud with --update-env-vars.
+deploy-help:
+	@echo "Current deploy sets APP_URL and AGENT_VERSION via gcloud."
+	@echo "Add other variables (DATABASE_URL, CLERK_*, LOGS_BUCKET_NAME, ...) in one of two ways:"
+	@echo "  1) Console: Cloud Run > Service > Edit & deploy new revision > Variables & Secrets"
+	@echo "  2) CLI: gcloud run services update multi-agent-system --region=asia-east1 \\"
+	@echo "       --update-env-vars=\"KEY1=$${VALUE1},KEY2=$${VALUE2}\""
+	@echo "Export values in your shell first; do not commit real secrets."
+
 # ==============================================================================
 # Testing & Code Quality
 # ==============================================================================

@@ -26,6 +26,9 @@ Before you begin, ensure you have:
 - **Google Cloud SDK**: For GCP services - [Install](https://cloud.google.com/sdk/docs/install)
 - **make**: Build automation tool - [Install](https://www.gnu.org/software/make/) (pre-installed on most Unix-based systems)
 
+## Configuration
+
+Environment variables are documented in [docs/integrations.md](docs/integrations.md). Copy `.env.example` to `.env` and fill in real values for local development. For Cloud Run, set the same names using `gcloud run services update` or the Cloud Console (see `make deploy-help`).
 
 ## Quick Start
 
@@ -44,6 +47,7 @@ make install && make playground
 | `make lint`          | Run code quality checks                                                                     |
 | `make test`          | Run unit and integration tests                                                              |
 | `make deploy`        | Deploy agent to Cloud Run                                                                   |
+| `make deploy-help`   | Show how to add Cloud Run env vars beyond what `deploy` sets                                |
 | `make local-backend` | Launch local development server with hot-reload                                             |
 | `make inspector`     | Launch A2A Protocol Inspector                                                               |
 
