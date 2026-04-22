@@ -5,7 +5,7 @@
 | Path | Role |
 |------|------|
 | [`app/fast_api_app.py`](../app/fast_api_app.py) | FastAPI app, CORS, lifespan (DB pool + A2A routes), `/feedback`, includes `api_v1_router` |
-| [`app/agent.py`](../app/agent.py) | ADK `App`, `root_agent`, tools including MCP bridge `call_mcp_tool` |
+| [`app/agent.py`](../app/agent.py) | ADK `App`, travel-concierge `root_agent` (`TravelCoordinator`) delegating to a sequential `FullPipeline` of `ResearchAgent → PlacesFormatter → InterestCheckAgent → SelectionFormatter → CalendarAgent → RoutingAgent` |
 | [`app/agent_runtime.py`](../app/agent_runtime.py) | Shared ADK `Runner`, session service, artifact service |
 | [`app/settings.py`](../app/settings.py) | `pydantic-settings`: `database_url`, Clerk URLs/issuer/audience, CORS, MCP flags |
 | [`app/db/pool.py`](../app/db/pool.py) | Global asyncpg pool: `create_pool`, `close_pool`, `get_pool` |
@@ -18,8 +18,8 @@
 | [`app/repositories/profiles.py`](../app/repositories/profiles.py) | Profile rows |
 | [`app/repositories/conversations.py`](../app/repositories/conversations.py) | Conversation ownership / lookup |
 | [`app/repositories/messages.py`](../app/repositories/messages.py) | Message insert/list |
-| [`app/mcp/mcp_client.py`](../app/mcp/mcp_client.py) | Stdio MCP client: `configure_stdio_server`, `call_tool` |
-| [`app/mcp/__init__.py`](../app/mcp/__init__.py) | Re-exports for agent tools |
+| [`app/mcp/mcp_client.py`](../app/mcp/mcp_client.py) | Stdio MCP client primitives (`configure_stdio_server`, `call_tool`); currently not wired into the active `root_agent` tools |
+| [`app/mcp/__init__.py`](../app/mcp/__init__.py) | Re-exports for MCP client helpers |
 | [`app/app_utils/telemetry.py`](../app/app_utils/telemetry.py) | OpenTelemetry / observability setup |
 | [`app/app_utils/typing.py`](../app/app_utils/typing.py) | Shared Pydantic types (e.g. `Feedback`) |
 | [`app/app_utils/eval_context.py`](../app/app_utils/eval_context.py) | Evaluation helpers (ADK eval flows) |

@@ -54,7 +54,7 @@ flowchart LR
 
 ## Agent runtime
 
-- [`app/agent.py`](../app/agent.py) defines `root_agent`, tools (weather/time helpers, `call_mcp_tool`, long-running user input), and `app = App(root_agent=root_agent, name="app")`.
+- [`app/agent.py`](../app/agent.py) defines a travel-concierge `root_agent` (`TravelCoordinator`) that delegates to a sequential `FullPipeline`: `ResearchAgent → PlacesFormatter → InterestCheckAgent → SelectionFormatter → CalendarAgent → RoutingAgent`. Each "formatter" stage is a schema-only agent (no tools) that converts the preceding free-form stage's draft into a strict Pydantic schema — this split is required because ADK forbids `tools` + `output_schema` on the same `LlmAgent` on non-Gemini-3 models (see `llm_agent.py` `output_schema` docstring). Cross-stage state keys: `places_draft` → `found_places` → `selection_draft` → `selected_event`. HITL pauses use `LongRunningFunctionTool(request_user_input)`; the calendar confirmation gate uses `FunctionTool(confirm_calendar_decision, require_confirmation=True)`. The ADK app is `app = App(root_agent=root_agent, name="app")` with resumability enabled.
 - [`app/agent_runtime.py`](../app/agent_runtime.py) constructs a single shared `Runner` with `InMemorySessionService` and either `GcsArtifactService` when `LOGS_BUCKET_NAME` is set, or `InMemoryArtifactService`.
 
 ## REST API
