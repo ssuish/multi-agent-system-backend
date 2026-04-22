@@ -1,7 +1,6 @@
 # multi-agent-system
 
-ReAct agent with A2A protocol [experimental]
-Agent generated with [`googleCloudPlatform/agent-starter-pack`](https://github.com/GoogleCloudPlatform/agent-starter-pack) version `0.41.0`
+**FastAPI** service with an [A2A](https://a2a-protocol.org/) travel-concierge agent ([Google ADK](https://google.github.io/adk-docs/)). It's a multi-step research → places → selection → calendar → routing pipeline. **REST** at `/api/v1` (profiles, chat) uses **Clerk** JWT auth and **Postgres** via asyncpg. Scaffolded from [agent-starter-pack](https://github.com/GoogleCloudPlatform/agent-starter-pack) `0.41.0`. For more project details and env vars used are in [docs/](docs/).
 
 ## Project Structure
 
