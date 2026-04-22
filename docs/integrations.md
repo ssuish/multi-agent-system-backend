@@ -7,7 +7,7 @@
 | **Postgres** (e.g. Supabase) | Profiles, conversations, messages | `database_url` in [`app/settings.py`](../app/settings.py) |
 | **Clerk** | End-user JWT auth for REST | `clerk_jwks_url`, `clerk_issuer`, optional `clerk_audience` |
 | **Google Cloud** | Default credentials, logging, Vertex AI for Gemini | `google.auth.default()`, env in [`app/agent.py`](../app/agent.py) / ADK |
-| **MCP (stdio)** | Optional tools from an MCP server | `mcp_enabled`, `mcp_server_command` (JSON array string) |
+| **MCP (stdio)** | Optional MCP client helpers present in codebase (not currently attached to active `root_agent`) | `mcp_enabled`, `mcp_server_command` (JSON array string) |
 | **GCS** (optional) | ADK artifact storage when deployed | `LOGS_BUCKET_NAME` read in [`app/agent_runtime.py`](../app/agent_runtime.py) |
 
 ## Environment variables
@@ -21,8 +21,9 @@
 | `CLERK_ISSUER` | Yes | — | Expected JWT `iss` claim. |
 | `CLERK_AUDIENCE` | No | — | Optional `aud` / `azp` verification. |
 | `CORS_ORIGINS` | No | `http://localhost:3000` | Comma-separated browser origins for CORS. |
-| `MCP_ENABLED` | No | `false` | Enable MCP stdio tool bridge in the agent. |
-| `MCP_SERVER_COMMAND` | When MCP enabled | — | JSON array string for the MCP server command, e.g. `["npx","-y","@modelcontextprotocol/server-everything"]`. |
+| `MCP_ENABLED` | No | `false` | Settings flag for MCP stdio integration (client code exists, but active `root_agent` does not currently call it). |
+| `MCP_SERVER_COMMAND` | When MCP enabled | — | JSON array string for MCP stdio server command used by `app/mcp/mcp_client.py`, e.g. `["npx","-y","@modelcontextprotocol/server-everything"]`. |
+| `GOOGLE_MAPS_API_KEY` | No | — | Read in [`app/agent.py`](../app/agent.py); logs a warning if missing. Required only when the (currently commented-out) live Maps/MCP tools are re-enabled. |
 
 **Direct `os.environ` / `os.getenv` (not in Settings)**
 
