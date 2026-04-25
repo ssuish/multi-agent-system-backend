@@ -16,11 +16,11 @@ def verify_clerk_jwt(
 
     if clerk_audience:
         decode_kwargs["audience"] = clerk_audience
-        payload = jwt_decode(
-            token,
-            signing_key.key,
-            **decode_kwargs,
-        )
+    payload = jwt_decode(
+        token,
+        signing_key.key,
+        **decode_kwargs,
+    )
 
     sub = payload.get("sub")
 
