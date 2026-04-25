@@ -27,6 +27,14 @@ class ConversationOut(BaseModel):
     updated_at: datetime
 
 
+class MessageOut(BaseModel):
+    id: UUID
+    conversation_id: UUID
+    role: str
+    content: str
+    created_at: datetime
+
+
 @router.post(
     "/conversations",
     response_model=ConversationOut,
@@ -66,3 +74,40 @@ async def get_conversation(
     except ConversationNotFoundError:
         raise HTTPException(status_code=404, detail="Conversation not found") from None
     return ConversationOut.model_validate(dict(row))
+
+
+@router.delete(
+    "/conversations/{conversation_id}", status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_conversation(
+    conversation_id: UUID,
+    clerk_user_id: Annotated[str, Depends(get_current_clerk_user_id)],
+    conn: Annotated[asyncpg.Connection, Depends(get_db_conn)],
+) -> None:
+    try:
+        await _svc.delete_conversation(
+            conn, clerk_user_id=clerk_user_id, conversation_id=conversation_id
+        )
+    except ConversationNotFoundError:
+        raise HTTPException(status_code=404, detail="Conversation not found") from None
+
+
+@router.get(
+    "/conversations/{conversation_id}/messages", response_model=list[MessageOut]
+)
+async def list_messages(
+    conversation_id: UUID,
+    clerk_user_id: Annotated[str, Depends(get_current_clerk_user_id)],
+    conn: Annotated[asyncpg.Connection, Depends(get_db_conn)],
+    limit: int = Query(default=200, ge=1, le=500),
+) -> list[MessageOut]:
+    try:
+        rows = await _svc.list_messages(
+            conn,
+            clerk_user_id=clerk_user_id,
+            conversation_id=conversation_id,
+            limit=limit,
+        )
+    except ConversationNotFoundError:
+        raise HTTPException(status_code=404, detail="Conversation not found") from None
+    return [MessageOut.model_validate(dict(row)) for row in rows]

@@ -52,3 +52,21 @@ async def list_conversations_for_user(
         profile_id,
         limit,
     )
+
+
+async def delete_conversation_for_user(
+    conn: asyncpg.Connection,
+    conversation_id: UUID,
+    profile_id: UUID,
+) -> bool:
+    row = await conn.fetchrow(
+        """
+            DELETE FROM conversations
+            WHERE id = $1 AND user_id = $2
+            RETURNING id
+            """,
+        conversation_id,
+        profile_id,
+    )
+
+    return row is not None
