@@ -1,0 +1,42 @@
+from uuid import UUID
+
+import asyncpg
+
+from app.repositories import conversations as conv_repo
+from app.repositories import profiles as profiles_repo
+
+
+class ConversationNotFoundError(Exception):
+    pass
+
+
+class ConversationService:
+    async def _get_or_create_profile_id(
+        self, conn: asyncpg.Connection, clerk_user_id: str
+    ) -> UUID:
+        profile = await profiles_repo.get_profile_by_clerk_id(conn, clerk_user_id)
+        if profile is None:
+            profile = await profiles_repo.upsert_profile(conn, clerk_user_id, None)
+        return profile["id"]
+
+    async def create_conversation(
+        self, conn: asyncpg.Connection, *, clerk_user_id: str, title: str | None
+    ) -> asyncpg.Record:
+        profile_id = await self._get_or_create_profile_id(conn, clerk_user_id)
+        return await conv_repo.create_conversation(conn, profile_id=profile_id, title=title)
+
+    async def list_conversations(
+        self, conn: asyncpg.Connection, *, clerk_user_id: str, limit: int = 50
+    ) -> list[asyncpg.Record]:
+        profile_id = await self._get_or_create_profile_id(conn, clerk_user_id)
+        return await conv_repo.list_conversations_for_user(conn, profile_id, limit=limit)
+
+    async def get_conversation(
+        self, conn: asyncpg.Connection, *, clerk_user_id: str, conversation_id: UUID
+    ) -> asyncpg.Record:
+        profile_id = await self._get_or_create_profile_id(conn, clerk_user_id)
+        row = await conv_repo.get_conversation_for_user(conn, conversation_id, profile_id)
+        if row is None:
+            raise ConversationNotFoundError()
+        return row
+
