@@ -1,72 +1,112 @@
 # multi-agent-system
 
-**FastAPI** service with an [A2A](https://a2a-protocol.org/) travel-concierge agent ([Google ADK](https://google.github.io/adk-docs/)). It's a multi-step research → places → selection → calendar → routing pipeline. **REST** at `/api/v1` (profiles, chat) uses **Clerk** JWT auth and **Postgres** via asyncpg. Scaffolded from [agent-starter-pack](https://github.com/GoogleCloudPlatform/agent-starter-pack) `0.41.0`. For more project details and env vars used are in [docs/](docs/).
+MVP backend for **JD–resume gap analysis and refinement** as specified in **[docs/prd.md](docs/prd.md)** — Clerk JWT, one CV and one JD per conversation, structured gap output (`gap_analysis_v1`), synchronous refinement with bounded inputs, append-only chat history, ordered section assembly for the final resume, persisted markdown/HTML preview, **idempotent export** of latest output, Redis **per-user LLM budgets** (429) and bounded **timeouts** in the target design.
 
-## Project Structure
+**Stack:** FastAPI, Postgres (asyncpg), **[Google ADK](https://google.github.io/adk-docs/)**, **[A2A](https://a2a-protocol.org/)** under `/a2a/app/`. What is implemented versus backlog is spelled out in the PRD **As-Is** and **Backlog** sections.
+
+**Docs:** [docs/INDEX.md](docs/INDEX.md) · **Technical gaps:** [docs/tech_debts.md](docs/tech_debts.md)
+
+---
+
+## Starter pack vs. this repo
+
+Bootstrapped from [Google Cloud Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack) (`adk_a2a`, v0.41.0): ADK/A2A app shape, GCP-oriented `Makefile` targets, telemetry hooks, and linked starter-pack guides.
+
+**Added or extended here:**
+
+- **REST** — `/api/v1` (profiles, conversations, chat); schemas under `app/api/v1/`.
+- **Auth** — Clerk JWKS JWT verification (`app/auth/`).
+- **Data layer** — asyncpg pool, migrations, repositories, services (`app/db/`, `app/repositories/`, `app/services/`).
+- **`docs/`** — PRD (`prd.md`), architecture, integrations, testing, tech debt.
+- **`app/agent.py`** — still coming from old implementation of multi-stage agent; **To be replace with resume refinement** per PRD P0 backlog (see architecture for current staging patterns).
+
+---
+
+## Project layout
 
 ```
 multi-agent-system/
-├── app/         # Core agent code
-│   ├── agent.py               # Main agent logic
-│   ├── fast_api_app.py        # FastAPI Backend server
-│   └── app_utils/             # App utilities and helpers
-├── tests/                     # Unit, integration, and load tests
-├── GEMINI.md                  # AI-assisted development guide
-├── Makefile                   # Development commands
-└── pyproject.toml             # Project dependencies
+├── app/
+│   ├── agent.py / agent_runtime.py   # ADK app, runner, pipeline
+│   ├── fast_api_app.py               # FastAPI app: lifespan, CORS, A2A mount, REST
+│   ├── api/v1/                       # REST routers and schemas
+│   ├── auth/                         # Clerk JWT deps
+│   ├── db/                           # Pool + migrations
+│   ├── repositories/                 # Asyncpg data access
+│   ├── services/                     # Conversation / chat orchestration
+│   ├── app_utils/                    # Telemetry, helpers
+│   └── mcp/                          # MCP client helpers (optional; see docs)
+├── docs/                             # Architecture, integrations, PRD, testing
+├── tests/                            # Unit + integration
+├── GEMINI.md                         # AI-assisted dev notes (Gemini CLI)
+├── Makefile                          # install, lint, test, backend, playground, deploy
+└── pyproject.toml
 ```
 
-> 💡 **Tip:** Use [Gemini CLI](https://github.com/google-gemini/gemini-cli) for AI-assisted development - project context is pre-configured in `GEMINI.md`.
+---
 
 ## Requirements
 
-Before you begin, ensure you have:
-- **uv**: Python package manager (used for all dependency management in this project) - [Install](https://docs.astral.sh/uv/getting-started/installation/) ([add packages](https://docs.astral.sh/uv/concepts/dependencies/) with `uv add <package>`)
-- **Google Cloud SDK**: For GCP services - [Install](https://cloud.google.com/sdk/docs/install)
-- **make**: Build automation tool - [Install](https://www.gnu.org/software/make/) (pre-installed on most Unix-based systems)
+- **[uv](https://docs.astral.sh/uv/getting-started/installation/)** — Python deps and runs (e.g. `uv run`, `uv sync`).
+- **[Google Cloud SDK](https://cloud.google.com/sdk/docs/install)** — For default credentials, logging, and deploy targets that use GCP.
+- **make** — Preinstalled on most Unix systems.
+
+---
 
 ## Configuration
 
-Environment variables are documented in [docs/integrations.md](docs/integrations.md). Copy `.env.example` to `.env` and fill in real values for local development. For Cloud Run, set the same names using `gcloud run services update` or the Cloud Console (see `make deploy-help`).
+Environment variables are listed in [docs/integrations.md](docs/integrations.md). Copy `.env.example` to `.env` for local development. On Cloud Run, set the same names via `gcloud run services update` or the console (see `make deploy-help`).
 
-## Quick Start
+---
 
-Install required packages and launch the local development environment:
+## Quick start
 
 ```bash
 make install && make playground
 ```
 
+`playground` runs the ADK web UI for the agent. For the **HTTP API** (REST + A2A on one process):
+
+```bash
+make local-backend
+```
+
+---
+
 ## Commands
 
-| Command              | Description                                                                                 |
-| -------------------- | ------------------------------------------------------------------------------------------- |
-| `make install`       | Install dependencies using uv                                                               |
-| `make playground`    | Launch local development environment                                                        |
-| `make lint`          | Run code quality checks                                                                     |
-| `make test`          | Run unit and integration tests                                                              |
-| `make deploy`        | Deploy agent to Cloud Run                                                                   |
-| `make deploy-help`   | Show how to add Cloud Run env vars beyond what `deploy` sets                                |
-| `make local-backend` | Launch local development server with hot-reload                                             |
-| `make inspector`     | Launch A2A Protocol Inspector                                                               |
+| Command | Description |
+| -------- | ----------- |
+| `make install` | Install dependencies with uv |
+| `make playground` | ADK web playground (agent dev) |
+| `make local-backend` | FastAPI + hot reload (default port 8000; `PORT=8001 make local-backend` for parallel runs) |
+| `make lint` | codespell + `ruff check`/`format --check` + `ty check` |
+| `make test` | Unit and integration tests |
+| `make deploy` | Deploy to Cloud Run (requires gcloud project setup) |
+| `make deploy-help` | Env var hints for Cloud Run |
+| `make inspector` | A2A Protocol Inspector |
 
-For full command options and usage, refer to the [Makefile](Makefile).
+Full options: [Makefile](Makefile).
 
-## 🛠️ Project Management
+### Optional: starter-pack upgrades
 
-| Command | What It Does |
-|---------|--------------|
-| `uvx agent-starter-pack enhance` | Add CI/CD pipelines and Terraform infrastructure |
-| `uvx agent-starter-pack setup-cicd` | One-command setup of entire CI/CD pipeline + infrastructure |
-| `uvx agent-starter-pack upgrade` | Auto-upgrade to latest version while preserving customizations |
-| `uvx agent-starter-pack extract` | Extract minimal, shareable version of your agent |
+| Command | Purpose |
+| -------- | -------- |
+| `uvx agent-starter-pack enhance` | Add CI/CD and Terraform |
+| `uvx agent-starter-pack setup-cicd` | One-shot CI/CD + infra |
+| `uvx agent-starter-pack upgrade` | Upgrade template while preserving customizations |
+| `uvx agent-starter-pack extract` | Minimal shareable agent slice |
 
 ---
 
 ## Development
 
-Edit your agent logic in `app/agent.py` and test with `make playground` - it auto-reloads on save.
-See the [development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide) for the full workflow.
+- Agent behavior: `app/agent.py` — iterate with `make playground` (reload).
+- HTTP surface: `app/fast_api_app.py`, `app/api/v1/`.
+- Starter-pack workflow: [development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide).
+- [Gemini CLI](https://github.com/google-gemini/gemini-cli): project notes in [GEMINI.md](GEMINI.md).
+
+---
 
 ## Deployment
 
@@ -75,16 +115,16 @@ gcloud config set project <your-project-id>
 make deploy
 ```
 
-To add CI/CD and Terraform, run `uvx agent-starter-pack enhance`.
-To set up your production infrastructure, run `uvx agent-starter-pack setup-cicd`.
-See the [deployment guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/deployment) for details.
+CI/CD and Terraform: `uvx agent-starter-pack enhance` and [deployment guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/deployment).
+
+---
 
 ## Observability
 
-Built-in telemetry exports to Cloud Trace, BigQuery, and Cloud Logging.
-See the [observability guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/observability) for queries and dashboards.
+Telemetry aligns with starter-pack patterns (Cloud Trace / logging / BigQuery-oriented setup as configured). Details: [observability guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/observability).
 
-## A2A Inspector
+---
 
-This agent supports the [A2A Protocol](https://a2a-protocol.org/). Use `make inspector` to test interoperability.
-See the [A2A Inspector docs](https://github.com/a2aproject/a2a-inspector) for details.
+## A2A
+
+[A2A Protocol](https://a2a-protocol.org/) RPC is mounted at `/a2a/app/`. Product auth policy for A2A is an open PRD backlog item (`make inspector`; [A2A Inspector](https://github.com/a2aproject/a2a-inspector)).
