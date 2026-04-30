@@ -1,6 +1,6 @@
 # Documentation index
 
-**Last reviewed:** 2026-04-25
+**Last reviewed:** 2026-04-30
 
 FastAPI service exposing an [A2A](https://a2a-protocol.org/) agent built with [Google ADK](https://google.github.io/adk-docs/), plus authenticated REST APIs backed by Postgres (asyncpg). Generated from the Agent Starter Pack; customized with Clerk JWT auth, Supabase-compatible DB URL, and optional MCP stdio tools.
 
@@ -10,9 +10,11 @@ FastAPI service exposing an [A2A](https://a2a-protocol.org/) agent built with [G
 - [modules.md](modules.md) — `app/` package map and notable files
 - [integrations.md](integrations.md) — Clerk, Postgres, GCP/Vertex, MCP env surface
 - [testing.md](testing.md) — Test layout and Makefile commands
+- [tech_debts.md](tech_debts.md) — Known gaps (schema drift, chat path, PRD guardrails)
 
 ## Changelog
 
+- 2026-04-30: Linked [tech_debts.md](tech_debts.md) from the index; refreshed `architecture.md` / `modules.md` for conversation 422 behavior and shared API schemas; expanded tech debt list with chat timeouts and reply payload gaps.
 - 2026-04-25: Refreshed docs against current `/api/v1` routes; added `conversations` router and `ConversationService` coverage to `modules.md` and `architecture.md`.
 - 2026-04-25: Rewrote [prd.md](prd.md) to a trimmed MVP scope; refreshed To-Be constraints, As-Is analysis, and P0/P1 backlog with auth/limits/timeout guardrails.
 - 2026-04-22: Added [prd.md](prd.md) to the documentation index; formatted MVP PRD (To-Be / As-Is / backlog).
