@@ -53,15 +53,15 @@ BEGIN
   ) THEN
     ALTER TABLE public."messages"
     ADD CONSTRAINT "messages_conversation_id_fkey"
-    FOREIGN KEY ("conversation_id") REFERENCES public."conversations" ("id");
-  END IF;
+    FOREIGN KEY ("conversation_id") REFERENCES public."conversations" ("id") ON DELETE CASCADE;
+  END IF;   
 END $$;
 
 -- Helpful indexes (only if they don't already exist)
 DO $$
 BEGIN
   -- conversations.user_id index
-  IF NOT EXISTS (
+  IF NOT EXISTS (   
     SELECT 1 FROM pg_indexes WHERE schemaname='public' AND indexname='conversations_user_id_idx'
   ) THEN
     CREATE INDEX "conversations_user_id_idx" ON public."conversations" ("user_id");
