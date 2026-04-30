@@ -11,9 +11,12 @@
 | [`app/db/pool.py`](../app/db/pool.py) | Global asyncpg pool: `create_pool`, `close_pool`, `get_pool` |
 | [`app/auth/clerk_jwt.py`](../app/auth/clerk_jwt.py) | JWT verification against Clerk JWKS |
 | [`app/auth/deps.py`](../app/auth/deps.py) | `HTTPBearer` → `get_current_clerk_user_id`, `get_db_conn` |
-| [`app/api/v1/router.py`](../app/api/v1/router.py) | `/api/v1` router; includes `profiles` and `chat` |
+| [`app/api/v1/router.py`](../app/api/v1/router.py) | `/api/v1` router; includes `chat`, `conversations`, and `profiles` |
+| [`app/api/v1/schemas/conversations.py`](../app/api/v1/schemas/conversations.py) | Pydantic models for conversations and chat (`ConversationCreateIn`, `ConversationOut`, `ChatMessageIn`/`Out`, `ChatReplyOut`, enums) |
 | [`app/api/v1/profiles.py`](../app/api/v1/profiles.py) | `GET`/`PUT` `/me` profile CRUD |
+| [`app/api/v1/conversations.py`](../app/api/v1/conversations.py) | Conversation lifecycle endpoints: create/list/get/delete conversations and list conversation messages |
 | [`app/api/v1/chat.py`](../app/api/v1/chat.py) | `POST` `/conversations/{conversation_id}/messages` via `ChatService` |
+| [`app/services/conversation_service.py`](../app/services/conversation_service.py) | Conversation ownership checks and profile-scoped CRUD/list operations |
 | [`app/services/chat_service.py`](../app/services/chat_service.py) | Persists messages, runs `Runner` for assistant reply |
 | [`app/repositories/profiles.py`](../app/repositories/profiles.py) | Profile rows |
 | [`app/repositories/conversations.py`](../app/repositories/conversations.py) | Conversation ownership / lookup |

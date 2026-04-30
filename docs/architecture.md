@@ -61,7 +61,9 @@ flowchart LR
 
 - Global prefix `/api/v1` from [`app/api/v1/router.py`](../app/api/v1/router.py).
 - **Profiles:** `GET`/`PUT` `/me` in [`app/api/v1/profiles.py`](../app/api/v1/profiles.py) (Clerk JWT + DB).
-- **Chat:** `POST` `/conversations/{conversation_id}/messages` in [`app/api/v1/chat.py`](../app/api/v1/chat.py), backed by [`app/services/chat_service.py`](../app/services/chat_service.py) and the shared ADK `Runner` from [`app/agent_runtime.py`](../app/agent_runtime.py).
+- **Conversations:** `POST /conversations`, `GET /conversations`, `GET /conversations/{conversation_id}`, `DELETE /conversations/{conversation_id}`, and `GET /conversations/{conversation_id}/messages` in [`app/api/v1/conversations.py`](../app/api/v1/conversations.py), backed by [`app/services/conversation_service.py`](../app/services/conversation_service.py). `POST /conversations` returns **422** when service-layer payload checks fail (`ConversationPayloadInvariantError`, e.g. blank `jd_text` / `cv_reference` after strip).
+- **Chat:** `POST` `/conversations/{conversation_id}/messages` in [`app/api/v1/chat.py`](../app/api/v1/chat.py), backed by [`app/services/chat_service.py`](../app/services/chat_service.py) and the shared ADK `Runner` from [`app/agent_runtime.py`](../app/agent_runtime.py). The route returns **404** when the conversation does not exist for the caller and **502** on other failures during the agent round-trip.
+- Request/response models for conversations and chat live in [`app/api/v1/schemas/conversations.py`](../app/api/v1/schemas/conversations.py) (there is no separate `schemas/chat.py` module).
 
 ## Feedback
 
