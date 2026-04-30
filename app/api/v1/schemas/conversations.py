@@ -16,7 +16,7 @@ class ConversationStatus(str, Enum):
 
 class ConversationCreateIn(BaseModel):
     title: str | None = None
-    status: str
+    status: ConversationStatus = ConversationStatus.active
     jd_text: str = Field(min_length=1, max_length=16000)
     cv_reference: str = Field(min_length=1, max_length=255)
     cv_markdown: str | None = None
@@ -43,3 +43,8 @@ class ChatMessageOut(BaseModel):
     role: str
     content: str
     created_at: datetime
+
+
+class ChatReplyOut(BaseModel):
+    reply: str
+    assistant_message_id: UUID

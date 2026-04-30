@@ -12,6 +12,7 @@ from app.api.v1.schemas.conversations import (
 from app.auth.deps import get_current_clerk_user_id, get_db_conn
 from app.services.conversation_service import (
     ConversationNotFoundError,
+    ConversationPayloadInvariantError,
     ConversationService,
 )
 
@@ -29,15 +30,19 @@ async def create_conversation(
     clerk_user_id: Annotated[str, Depends(get_current_clerk_user_id)],
     conn: Annotated[asyncpg.Connection, Depends(get_db_conn)],
 ) -> ConversationOut:
-    row = await _svc.create_conversation(
-        conn,
-        clerk_user_id=clerk_user_id,
-        title=body.title,
-        status=body.status,
-        jd_text=body.jd_text,
-        cv_reference=body.cv_reference,
-        cv_markdown=body.cv_markdown,
-    )
+    try:
+        row = await _svc.create_conversation(
+            conn,
+            clerk_user_id=clerk_user_id,
+            title=body.title,
+            status=body.status,
+            jd_text=body.jd_text,
+            cv_reference=body.cv_reference,
+            cv_markdown=body.cv_markdown,
+        )
+    except ConversationPayloadInvariantError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+
     return ConversationOut.model_validate(dict(row))
 
 

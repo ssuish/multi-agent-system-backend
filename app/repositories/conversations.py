@@ -31,7 +31,7 @@ async def create_conversation(
     return await conn.fetchrow(
         """
         INSERT INTO conversations (user_id, title, status, jd_text, cv_reference, cv_markdown)
-        VALUES ($1, $2, 'active', $3, $4, $5)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, user_id, title, status, jd_text, cv_reference, cv_markdown, created_at, updated_at
         """,
         profile_id,
