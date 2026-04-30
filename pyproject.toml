@@ -1,10 +1,12 @@
 [project]
 name = "multi-agent-system"
 version = "0.1.0"
-description = ""
+description = "PRD-defined resume/JD MVP backend: Clerk, gap analysis, refinement, export (FastAPI, Google ADK, Postgres). See docs/prd.md."
 authors = [
-    {name = "Your Name", email = "your@email.com"},
+    {name = "ssuish"},
 ]
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
 dependencies = [
     "google-adk>=1.16.0,<2.0.0",
     "a2a-sdk~=0.3.22",
@@ -21,8 +23,11 @@ dependencies = [
     "pydantic-settings>=2.13.1",
     "mcp>=1.26.0",
 ]
-requires-python = ">=3.10,<3.14"
 
+[project.urls]
+Repository = "https://github.com/ssuish/multi-agent-system-backend"
+Documentation = "https://github.com/ssuish/multi-agent-system-backend/tree/main/docs"
+Issues = "https://github.com/ssuish/multi-agent-system-backend/issues"
 
 [dependency-groups]
 dev = [
@@ -109,10 +114,9 @@ markers = [
 packages = ["app","frontend"]
 
 [tool.agent-starter-pack]
-# Generation metadata - enables CLI commands to understand project context
-# These fields allow any generated project to work as a remote template
+# Generation metadata — from Agent Starter Pack; product scope: docs/prd.md
 name = "multi-agent-system"
-description = "ReAct agent with A2A protocol [experimental]"
+description = "adk_a2a base; target: resume/JD refinement MVP (docs/prd.md)"
 base_template = "adk_a2a"
 agent_directory = "app"
 
