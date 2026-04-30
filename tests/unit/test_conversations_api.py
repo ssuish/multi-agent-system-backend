@@ -7,7 +7,7 @@ from app.auth import deps as deps_mod
 from app.fast_api_app import app
 
 
-def test_create_conversation_returns_core_fields() -> None:
+def test_create_conversation_returns_payload_fields() -> None:
     now = datetime.now()
     conv_id = uuid4()
     profile_id = uuid4()
@@ -21,6 +21,9 @@ def test_create_conversation_returns_core_fields() -> None:
                     "id": conv_id,
                     "user_id": profile_id,
                     "title": "First",
+                    "jd_text": "JD", 
+                    "cv_reference": "cv_1", 
+                    "cv_markdown": "# CV",
                     "created_at": now,
                     "updated_at": now,
                 }
@@ -35,11 +38,11 @@ def test_create_conversation_returns_core_fields() -> None:
     app.dependency_overrides[deps_mod.get_current_clerk_user_id] = lambda: "user_a"
     app.dependency_overrides[deps_mod.get_db_conn] = fake_conn_dep
     client = TestClient(app)
-    res = client.post("/api/v1/conversations", json={"title": "First"})
+    res = client.post("/api/v1/conversations", json={"title": "First", "jd_text": "JD", "cv_reference": "cv_1", "cv_markdown": "# CV"})
     app.dependency_overrides.clear()
 
     assert res.status_code == 201
-    assert set(res.json().keys()) == {"id", "title", "created_at", "updated_at"}
+    assert {"id", "title", "status", "jd_text", "cv_reference", "cv_markdown", "created_at", "updated_at"} <= set(res.json().keys())
 
 
 def test_get_conversation_returns_404_when_not_owned() -> None:

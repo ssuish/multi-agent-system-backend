@@ -4,8 +4,12 @@ from uuid import UUID
 
 import asyncpg
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel
 
+from app.api.v1.schemas.conversations import (
+    ConversationCreateIn,
+    ConversationOut,
+    ChatMessageOut,
+)
 from app.auth.deps import get_current_clerk_user_id, get_db_conn
 from app.services.conversation_service import (
     ConversationNotFoundError,
@@ -14,25 +18,6 @@ from app.services.conversation_service import (
 
 router = APIRouter(tags=["conversation"])
 _svc = ConversationService()
-
-
-class ConversationCreateIn(BaseModel):
-    title: str | None = None
-
-
-class ConversationOut(BaseModel):
-    id: UUID
-    title: str | None
-    created_at: datetime
-    updated_at: datetime
-
-
-class MessageOut(BaseModel):
-    id: UUID
-    conversation_id: UUID
-    role: str
-    content: str
-    created_at: datetime
 
 
 @router.post(
@@ -93,14 +78,14 @@ async def delete_conversation(
 
 
 @router.get(
-    "/conversations/{conversation_id}/messages", response_model=list[MessageOut]
+    "/conversations/{conversation_id}/messages", response_model=list[ChatMessageOut]
 )
 async def list_messages(
     conversation_id: UUID,
     clerk_user_id: Annotated[str, Depends(get_current_clerk_user_id)],
     conn: Annotated[asyncpg.Connection, Depends(get_db_conn)],
     limit: int = Query(default=200, ge=1, le=500),
-) -> list[MessageOut]:
+) -> list[ChatMessageOut]:
     try:
         rows = await _svc.list_messages(
             conn,
@@ -110,4 +95,4 @@ async def list_messages(
         )
     except ConversationNotFoundError:
         raise HTTPException(status_code=404, detail="Conversation not found") from None
-    return [MessageOut.model_validate(dict(row)) for row in rows]
+    return [ChatMessageOut.model_validate(dict(row)) for row in rows]

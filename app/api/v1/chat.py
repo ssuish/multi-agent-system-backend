@@ -3,23 +3,14 @@ from uuid import UUID
 
 import asyncpg
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
 
 from app.agent_runtime import runner
+from app.api.v1.schemas.conversations import ChatMessageIn, ChatMessageOut
 from app.auth.deps import get_current_clerk_user_id, get_db_conn
 from app.services.chat_service import ChatService, ConversationNotFoundError
 
 router = APIRouter(tags=["chat"])
 _chat_service = ChatService(runner=runner)
-
-
-class ChatMessageIn(BaseModel):
-    text: str
-
-
-class ChatMessageOut(BaseModel):
-    reply: str
-    assistant_message_id: UUID
 
 
 @router.post("/conversations/{conversation_id}/messages", response_model=ChatMessageOut)
