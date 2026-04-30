@@ -5,7 +5,7 @@ import asyncpg
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.agent_runtime import runner
-from app.api.v1.schemas.conversations import ChatMessageIn, ChatMessageOut, ChatReplyOut
+from app.api.v1.schemas.conversations import ChatMessageIn, ChatReplyOut
 from app.auth.deps import get_current_clerk_user_id, get_db_conn
 from app.services.chat_service import ChatService, ConversationNotFoundError
 
