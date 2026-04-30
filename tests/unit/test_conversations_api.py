@@ -21,8 +21,9 @@ def test_create_conversation_returns_payload_fields() -> None:
                     "id": conv_id,
                     "user_id": profile_id,
                     "title": "First",
-                    "jd_text": "JD", 
-                    "cv_reference": "cv_1", 
+                    "status": "active",
+                    "jd_text": "JD",
+                    "cv_reference": "cv_1",
                     "cv_markdown": "# CV",
                     "created_at": now,
                     "updated_at": now,
@@ -38,7 +39,7 @@ def test_create_conversation_returns_payload_fields() -> None:
     app.dependency_overrides[deps_mod.get_current_clerk_user_id] = lambda: "user_a"
     app.dependency_overrides[deps_mod.get_db_conn] = fake_conn_dep
     client = TestClient(app)
-    res = client.post("/api/v1/conversations", json={"title": "First", "jd_text": "JD", "cv_reference": "cv_1", "cv_markdown": "# CV"})
+    res = client.post("/api/v1/conversations", json={"title": "First", "status":"active", "jd_text": "JD", "cv_reference": "cv_1", "cv_markdown": "# CV"})
     app.dependency_overrides.clear()
 
     assert res.status_code == 201

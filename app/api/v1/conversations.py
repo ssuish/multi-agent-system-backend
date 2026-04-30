@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -6,9 +5,9 @@ import asyncpg
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.v1.schemas.conversations import (
+    ChatMessageOut,
     ConversationCreateIn,
     ConversationOut,
-    ChatMessageOut,
 )
 from app.auth.deps import get_current_clerk_user_id, get_db_conn
 from app.services.conversation_service import (
@@ -31,7 +30,13 @@ async def create_conversation(
     conn: Annotated[asyncpg.Connection, Depends(get_db_conn)],
 ) -> ConversationOut:
     row = await _svc.create_conversation(
-        conn, clerk_user_id=clerk_user_id, title=body.title
+        conn,
+        clerk_user_id=clerk_user_id,
+        title=body.title,
+        status=body.status,
+        jd_text=body.jd_text,
+        cv_reference=body.cv_reference,
+        cv_markdown=body.cv_markdown,
     )
     return ConversationOut.model_validate(dict(row))
 

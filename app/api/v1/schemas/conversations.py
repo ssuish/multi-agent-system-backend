@@ -16,6 +16,7 @@ class ConversationStatus(str, Enum):
 
 class ConversationCreateIn(BaseModel):
     title: str | None = None
+    status: str
     jd_text: str = Field(min_length=1, max_length=16000)
     cv_reference: str = Field(min_length=1, max_length=255)
     cv_markdown: str | None = None
@@ -30,6 +31,7 @@ class ConversationOut(BaseModel):
     cv_markdown: str | None
     created_at: datetime
     updated_at: datetime
+
 
 class ChatMessageIn(BaseModel):
     text: str = Field(min_length=1, max_length=500)

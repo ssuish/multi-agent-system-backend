@@ -1,7 +1,9 @@
 from uuid import uuid4
+
 from fastapi.testclient import TestClient
-from app.fast_api_app import app
+
 from app.auth import deps as deps_mod
+from app.fast_api_app import app
 
 
 def test_post_message_rejects_over_500_chars() -> None:

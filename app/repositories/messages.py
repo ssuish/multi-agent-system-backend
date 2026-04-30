@@ -9,6 +9,9 @@ async def insert_message(
     role: str,
     content: str,
 ) -> asyncpg.Record:
+    if role not in {"user", "assistant"}:
+        raise ValueError(f"Unsupported message role: {role}")
+
     return await conn.fetchrow(
         """
         INSERT INTO messages (conversation_id, role, content)

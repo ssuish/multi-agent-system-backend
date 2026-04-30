@@ -11,6 +11,10 @@ class ConversationNotFoundError(Exception):
     pass
 
 
+class ConversationPayloadInvariantError(Exception):
+    pass
+
+
 class ConversationService:
     async def _get_or_create_profile_id(
         self, conn: asyncpg.Connection, clerk_user_id: str
@@ -21,11 +25,32 @@ class ConversationService:
         return profile["id"]
 
     async def create_conversation(
-        self, conn: asyncpg.Connection, *, clerk_user_id: str, title: str | None
+        self,
+        conn: asyncpg.Connection,
+        *,
+        clerk_user_id: str,
+        title: str | None,
+        status: str,
+        jd_text: str,
+        cv_reference: str,
+        cv_markdown: str | None,
     ) -> asyncpg.Record:
         profile_id = await self._get_or_create_profile_id(conn, clerk_user_id)
+
+        if not jd_text.strip():
+            raise ConversationPayloadInvariantError("jd_text is required")
+
+        if not cv_reference.strip():
+            raise ConversationPayloadInvariantError("cv_reference is required")
+
         return await conv_repo.create_conversation(
-            conn, profile_id=profile_id, title=title
+            conn,
+            profile_id=profile_id,
+            title=title,
+            status=status,
+            jd_text=jd_text,
+            cv_reference=cv_reference,
+            cv_markdown=cv_markdown,
         )
 
     async def list_conversations(
